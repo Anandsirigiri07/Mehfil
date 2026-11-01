@@ -9,6 +9,7 @@ import { GoogleGenAI } from '@google/genai';
 export * from './fallbacks';
 
 const API_TIMEOUT_MS = 8000;
+const CANDIDATE_MODELS = ['gemini-3.6-flash', 'gemini-3.8-flash', 'gemini-3.5-flash'];
 
 export function getGeminiClient(): GoogleGenAI | null {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -35,4 +36,30 @@ export async function withTimeout<T>(
   } finally {
     clearTimeout(timer!);
   }
+}
+
+/**
+ * Generates content starting with primary gemini-3.6-flash, failing over to 3.8/3.5 on transient errors.
+ */
+export async function generateContentWithFailover(
+  ai: GoogleGenAI,
+  prompt: string,
+  config?: { responseMimeType?: string; temperature?: number }
+) {
+  let lastError: unknown;
+  for (const model of CANDIDATE_MODELS) {
+    try {
+      return await withTimeout(
+        ai.models.generateContent({
+          model,
+          contents: prompt,
+          config,
+        }),
+        API_TIMEOUT_MS
+      );
+    } catch (err: unknown) {
+      lastError = err;
+    }
+  }
+  throw lastError ?? new Error('ALL_MODELS_FAILED');
 }

@@ -6,7 +6,7 @@
 import type { VercelRequest, VercelResponse } from './_lib/types';
 import { validateRequestSecurity, wrapUntrustedData, sendSafeError } from './_lib/security';
 import { generateCacheKey, getCached, setCached } from './_lib/cache';
-import { getGeminiClient, withTimeout, fallbackParseIntake } from './_lib/gemini';
+import { getGeminiClient, generateContentWithFailover, fallbackParseIntake } from './_lib/gemini';
 import { ParseIntakeRequestSchema, ParsedIntakeResponseSchema } from '../src/types/schemas';
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -62,16 +62,10 @@ IMPORTANT:
 User description:
 ${wrapUntrustedData(description)}`;
 
-    const response = await withTimeout(
-      ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.1,
-        },
-      })
-    );
+    const response = await generateContentWithFailover(ai, prompt, {
+      responseMimeType: 'application/json',
+      temperature: 0.1,
+    });
 
     const text = response.text?.trim() ?? '{}';
     const parsedJson = JSON.parse(text);

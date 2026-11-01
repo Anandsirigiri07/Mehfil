@@ -6,7 +6,7 @@
 import type { VercelRequest, VercelResponse } from './_lib/types';
 import { validateRequestSecurity, wrapUntrustedData, sendSafeError } from './_lib/security';
 import { generateCacheKey, getCached, setCached } from './_lib/cache';
-import { getGeminiClient, withTimeout, fallbackReviewPlan } from './_lib/gemini';
+import { getGeminiClient, generateContentWithFailover, fallbackReviewPlan } from './_lib/gemini';
 import { ReviewPlanRequestSchema, ReviewPlanResponseSchema } from '../src/types/schemas';
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -80,16 +80,10 @@ IMPORTANT:
 - The AI never calculates money or dates and never invents prices or vendors.
 - Output strictly valid JSON matching the schema.`;
 
-    const response = await withTimeout(
-      ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.2,
-        },
-      })
-    );
+    const response = await generateContentWithFailover(ai, prompt, {
+      responseMimeType: 'application/json',
+      temperature: 0.2,
+    });
 
     const text = response.text?.trim() ?? '{}';
     const parsedJson = JSON.parse(text);

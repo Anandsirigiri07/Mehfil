@@ -6,7 +6,7 @@
 import type { VercelRequest, VercelResponse } from './_lib/types';
 import { validateRequestSecurity, wrapUntrustedData, sendSafeError } from './_lib/security';
 import { generateCacheKey, getCached, setCached } from './_lib/cache';
-import { getGeminiClient, withTimeout, fallbackSuggestIdeas } from './_lib/gemini';
+import { getGeminiClient, generateContentWithFailover, fallbackSuggestIdeas } from './_lib/gemini';
 import { SuggestIdeasRequestSchema, SuggestIdeasResponseSchema } from '../src/types/schemas';
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -61,16 +61,10 @@ IMPORTANT:
 - Do NOT compute arbitrary line-item figures or invent specific commercial vendors.
 - Output strictly valid JSON matching the schema.`;
 
-    const response = await withTimeout(
-      ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.3,
-        },
-      })
-    );
+    const response = await generateContentWithFailover(ai, prompt, {
+      responseMimeType: 'application/json',
+      temperature: 0.3,
+    });
 
     const text = response.text?.trim() ?? '{}';
     const parsedJson = JSON.parse(text);

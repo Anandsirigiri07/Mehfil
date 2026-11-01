@@ -6,7 +6,7 @@
 import type { VercelRequest, VercelResponse } from './_lib/types';
 import { validateRequestSecurity, wrapUntrustedData, sendSafeError } from './_lib/security';
 import { generateCacheKey, getCached, setCached } from './_lib/cache';
-import { getGeminiClient, withTimeout, fallbackAskPlanner } from './_lib/gemini';
+import { getGeminiClient, generateContentWithFailover, fallbackAskPlanner } from './_lib/gemini';
 import { AskPlannerRequestSchema, AskPlannerResponseSchema } from '../src/types/schemas';
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -97,16 +97,10 @@ STRICT RULES:
    - referencedItems: list of relevant plan categories or tasks mentioned
    - suggestedAction: actionable next step in the app`;
 
-    const response = await withTimeout(
-      ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.2,
-        },
-      })
-    );
+    const response = await generateContentWithFailover(ai, prompt, {
+      responseMimeType: 'application/json',
+      temperature: 0.2,
+    });
 
     const text = response.text?.trim() ?? '{}';
     const parsedJson = JSON.parse(text);

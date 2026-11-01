@@ -3,6 +3,9 @@ import '@testing-library/jest-dom';
 import { toHaveNoViolations } from 'jest-axe';
 import { expect } from 'vitest';
 
+// Guarantee unit tests run strictly offline in test isolation
+delete process.env.GEMINI_API_KEY;
+
 expect.extend(toHaveNoViolations);
 
 interface CustomMatchers<R = unknown> {

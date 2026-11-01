@@ -104,7 +104,7 @@ Mehfil establishes an unshakeable boundary: **Gemini is used server-side exclusi
 ## GenAI Usage Specifications
 
 - **SDK**: Official `@google/genai` SDK on Vercel Serverless Functions.
-- **Model**: `gemini-2.5-flash` with structured JSON output and low temperature (0.1–0.3) for factual reproducibility.
+- **Model**: `gemini-3.6-flash` with structured JSON output and low temperature (0.1–0.3) for factual reproducibility.
 - **Validation**: Every response is validated using shared Zod schemas in [schemas.ts](./src/types/schemas.ts) before reaching the client.
 - **Prompt Injection Defense**: Sanitization strips tags and control sequences; user text is encapsulated inside `<<<START_USER_INPUT>>>` delimiters and declared as raw data to the model.
 - **Offline Fallback**: When no API key is set or upon network failure, the application automatically switches to deterministic rule-based generators and labels results with an offline badge.
