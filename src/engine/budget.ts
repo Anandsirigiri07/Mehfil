@@ -70,7 +70,7 @@ export function distributeIntegerLargestRemainder(
   const exactShares = weights.map((w) => (Math.max(0, w) * totalToDistribute) / weightSum);
   const floors = exactShares.map((s) => Math.floor(s));
   const allocatedSum = floors.reduce((acc, f) => acc + f, 0);
-  let remainder = totalToDistribute - allocatedSum;
+  const remainder = totalToDistribute - allocatedSum;
 
   const indexedRemainders = exactShares
     .map((share, idx) => ({

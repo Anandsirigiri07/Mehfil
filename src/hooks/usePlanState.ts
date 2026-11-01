@@ -76,7 +76,7 @@ export function usePlanState() {
         const encoded = hash.replace('#plan=', '');
         const decoded = decodeShareablePlan(encoded);
         setPlan(decoded);
-      } catch (_e) {
+      } catch {
         // Fallback to default
       }
     }

@@ -60,7 +60,7 @@ export const AIAssistantDrawer: React.FC<AIAssistantDrawerProps> = ({
       });
       const data = await res.json();
       setChatLog((prev) => [...prev, { q: currentQ, a: data.answer, fallback: data.isFallback }]);
-    } catch (_err) {
+    } catch {
       setChatLog((prev) => [
         ...prev,
         {
@@ -94,7 +94,7 @@ export const AIAssistantDrawer: React.FC<AIAssistantDrawerProps> = ({
       });
       const data = await res.json();
       setIdeas(data);
-    } catch (_err) {
+    } catch {
       // Handled
     } finally {
       setIsLoading(false);
@@ -115,7 +115,7 @@ export const AIAssistantDrawer: React.FC<AIAssistantDrawerProps> = ({
       });
       const data = await res.json();
       setReview(data);
-    } catch (_err) {
+    } catch {
       // Handled
     } finally {
       setIsLoading(false);

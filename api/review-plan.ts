@@ -101,7 +101,7 @@ IMPORTANT:
     setCached(cacheKey, validated);
     res.setHeader('X-Cache', 'MISS');
     res.status(200).json(validated);
-  } catch (_err) {
+  } catch {
     const fallback = fallbackReviewPlan(plan, today);
     setCached(cacheKey, fallback);
     res.setHeader('X-Cache', 'MISS');

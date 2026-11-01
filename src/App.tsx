@@ -95,9 +95,10 @@ export const App: React.FC = () => {
             </div>
 
             {/* Navigation Tabs */}
-            <nav
+            <div
               className="flex overflow-x-auto border-b border-stone-200 dark:border-stone-800 gap-1 pb-px"
               role="tablist"
+              aria-label="Celebration management sections"
             >
               {navTabs.map((tab) => (
                 <button
@@ -115,7 +116,7 @@ export const App: React.FC = () => {
                   {tab.label}
                 </button>
               ))}
-            </nav>
+            </div>
 
             {/* Tab Views */}
             {activeTab === 'budget' && (

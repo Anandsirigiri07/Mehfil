@@ -55,7 +55,7 @@ export const FreeTextIntake: React.FC<FreeTextIntakeProps> = ({ today, onParsed,
         setLastFallback(true);
       }
       onParsed(data);
-    } catch (_err) {
+    } catch {
       onError('AI parsing encountered an error. Falling back to manual entry.');
     } finally {
       setIsLoading(false);

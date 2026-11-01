@@ -83,7 +83,7 @@ ${wrapUntrustedData(description)}`;
     setCached(cacheKey, validated);
     res.setHeader('X-Cache', 'MISS');
     res.status(200).json(validated);
-  } catch (_err) {
+  } catch {
     // Graceful failover to deterministic rule-based fallback
     const fallback = fallbackParseIntake(description, today);
     setCached(cacheKey, fallback);

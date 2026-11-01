@@ -118,7 +118,7 @@ STRICT RULES:
     setCached(cacheKey, validated);
     res.setHeader('X-Cache', 'MISS');
     res.status(200).json(validated);
-  } catch (_err) {
+  } catch {
     const fallback = fallbackAskPlanner(plan, question);
     setCached(cacheKey, fallback);
     res.setHeader('X-Cache', 'MISS');

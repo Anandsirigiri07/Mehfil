@@ -35,7 +35,7 @@ export const ExportShareModal: React.FC<ExportShareModalProps> = ({ plan, onClos
       void navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-    } catch (_err) {
+    } catch {
       alert('Plan payload exceeded size limit.');
     }
   };
