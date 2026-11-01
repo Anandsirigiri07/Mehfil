@@ -40,6 +40,20 @@ export function wrapUntrustedData(input: string, label: string = 'USER_INPUT'): 
 }
 
 /**
+ * Safely parses request body whether it arrived as an object or raw JSON string.
+ */
+export function parseBodyPayload<T = unknown>(body: unknown): T {
+  if (typeof body === 'string') {
+    try {
+      return JSON.parse(body) as T;
+    } catch {
+      return body as T;
+    }
+  }
+  return body as T;
+}
+
+/**
  * Validates request security headers, body size, rate limits, and origin.
  * Returns true if allowed, false if response has already been sent with an error.
  */
@@ -76,15 +90,20 @@ export function validateRequestSecurity(req: VercelRequest, res: VercelResponse)
 
   // 4. Same-origin or allowed origin check
   const origin = req.headers['origin'] ?? req.headers['referer'];
-  const host = req.headers['host'];
+  const host =
+    (req.headers['x-forwarded-host'] as string | undefined) ??
+    (req.headers['host'] as string | undefined);
+
   if (origin && host) {
     try {
-      const originHost = new URL(origin as string).host;
-      if (
-        originHost !== host &&
-        !originHost.includes('localhost') &&
-        !originHost.includes('127.0.0.1')
-      ) {
+      const originHost = new URL(origin as string).host.replace(/:\d+$/, '');
+      const currentHost = host.split(',')[0]?.trim().replace(/:\d+$/, '') ?? '';
+
+      const isLocalhost = originHost.includes('localhost') || originHost.includes('127.0.0.1');
+      const isSameHost = originHost === currentHost;
+      const isVercel = originHost.endsWith('.vercel.app') && currentHost.endsWith('.vercel.app');
+
+      if (!isSameHost && !isLocalhost && !isVercel) {
         res.status(403).json({
           error: 'Forbidden. Cross-origin request blocked.',
           code: 'ORIGIN_MISMATCH',

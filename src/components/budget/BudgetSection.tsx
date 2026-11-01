@@ -186,10 +186,16 @@ export const BudgetSection: React.FC<BudgetSectionProps> = ({
                 aria-valuemax={100}
                 aria-label={`${cat.name} allocation share`}
               >
-                <div
-                  className="bg-mehfil-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${Math.min(100, Math.max(0, Number(percentOfBudget)))}%` }}
-                />
+                <svg className="w-full h-2 block" aria-hidden="true">
+                  <rect
+                    x="0"
+                    y="0"
+                    width={`${Math.min(100, Math.max(0, Number(percentOfBudget)))}%`}
+                    height="100%"
+                    rx="4"
+                    className="fill-mehfil-600 transition-all duration-300"
+                  />
+                </svg>
               </div>
             </div>
           );

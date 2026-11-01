@@ -83,6 +83,32 @@ describe('API Security, Validation & Offline Fallback Tests', () => {
     expect(responseState.statusCode).toBe(403);
   });
 
+  it('allows same-origin requests even when proxy includes port or x-forwarded-host', async () => {
+    const { req, res, responseState } = createMockReqRes({
+      headers: {
+        origin: 'https://mehfil-app.vercel.app',
+        'x-forwarded-host': 'mehfil-app.vercel.app:443',
+        host: 'lambda-internal.aws.local',
+      },
+      body: { description: 'Birthday for kids with 20 guests', today: '2026-11-01' },
+    });
+    await parseIntakeHandler(req, res);
+    expect(responseState.statusCode).toBe(200);
+  });
+
+  it('safely handles request bodies arriving as serialized JSON strings', async () => {
+    const { req, res, responseState } = createMockReqRes({
+      body: JSON.stringify({
+        description: 'Community cleanup with 30 volunteers next week',
+        today: '2026-11-01',
+      }),
+    });
+    await parseIntakeHandler(req, res);
+    expect(responseState.statusCode).toBe(200);
+    const body = responseState.body as { occasion: string };
+    expect(body.occasion).toBe('community');
+  });
+
   it('rejects malformed origin header with 400', async () => {
     const { req, res, responseState } = createMockReqRes({
       headers: { origin: '://bad-url', host: 'mehfil.app' },

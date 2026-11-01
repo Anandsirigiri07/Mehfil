@@ -4,7 +4,12 @@
  */
 
 import type { VercelRequest, VercelResponse } from './_lib/types';
-import { validateRequestSecurity, wrapUntrustedData, sendSafeError } from './_lib/security';
+import {
+  validateRequestSecurity,
+  wrapUntrustedData,
+  sendSafeError,
+  parseBodyPayload,
+} from './_lib/security';
 import { generateCacheKey, getCached, setCached } from './_lib/cache';
 import { getGeminiClient, generateContentWithFailover, fallbackAskPlanner } from './_lib/gemini';
 import { AskPlannerRequestSchema, AskPlannerResponseSchema } from '../src/types/schemas';
@@ -12,7 +17,8 @@ import { AskPlannerRequestSchema, AskPlannerResponseSchema } from '../src/types/
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   if (!validateRequestSecurity(req, res)) return;
 
-  const parseResult = AskPlannerRequestSchema.safeParse(req.body);
+  const payload = parseBodyPayload(req.body);
+  const parseResult = AskPlannerRequestSchema.safeParse(payload);
   if (!parseResult.success) {
     sendSafeError(
       res,
