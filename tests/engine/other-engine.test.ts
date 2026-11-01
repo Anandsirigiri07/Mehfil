@@ -9,6 +9,7 @@ import {
   encodeShareablePlan,
   decodeShareablePlan,
 } from '../../src/engine/export';
+import { fallbackParseIntake } from '../../src/engine/intake';
 import { initializeBudgetCategories } from '../../src/engine/budget';
 import { initializeTimeline } from '../../src/engine/timeline';
 import type { MehfilPlan, VendorPayment } from '../../src/types';
@@ -211,5 +212,27 @@ describe('Checklist, RSVP, Community, Payments, Scenario & Export Engine Tests',
     const decoded = decodeShareablePlan(encoded);
     expect(decoded.title).toBe(plan.title);
     expect(decoded.budget.totalMinor).toBe(plan.budget.totalMinor);
+  });
+
+  it('deterministically parses natural language intake parameters with fallback engine', () => {
+    const res = fallbackParseIntake(
+      'Birthday for 40 kids in Bengaluru, 60k budget, next month',
+      '2026-11-01'
+    );
+    expect(res.occasion).toBe('birthday');
+    expect(res.guestCount).toBe(40);
+    expect(res.location).toBe('Bengaluru');
+    expect(res.totalBudgetMinor).toBe(6000000);
+    expect(res.eventDate).toBe('2026-12-01');
+    expect(res.isFallback).toBe(true);
+
+    const wedding = fallbackParseIntake(
+      'Shaadi in Jaipur for 200 guests with 10 lakh',
+      '2026-11-01'
+    );
+    expect(wedding.occasion).toBe('wedding');
+    expect(wedding.location).toBe('Jaipur');
+    expect(wedding.guestCount).toBe(200);
+    expect(wedding.totalBudgetMinor).toBe(100000000);
   });
 });

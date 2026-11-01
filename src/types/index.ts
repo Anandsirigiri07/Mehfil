@@ -115,3 +115,15 @@ export interface MehfilPlan {
   readonly createdAt: string;
   readonly updatedAt: string;
 }
+
+export interface ParsedIntakeResponse {
+  readonly title: string;
+  readonly occasion: OccasionType;
+  readonly eventDate: string;
+  readonly location: string;
+  readonly guestCount: number;
+  readonly totalBudgetMinor: number;
+  readonly currency: string;
+  readonly specialRequirements?: readonly string[];
+  readonly isFallback?: boolean;
+}

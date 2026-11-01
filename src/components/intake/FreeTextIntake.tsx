@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Loader2, Info } from 'lucide-react';
 import type { OccasionType } from '../../types';
+import { fallbackParseIntake } from '../../engine';
 
 interface FreeTextIntakeProps {
   today: string;
@@ -56,7 +57,10 @@ export const FreeTextIntake: React.FC<FreeTextIntakeProps> = ({ today, onParsed,
       }
       onParsed(data);
     } catch {
-      onError('AI parsing encountered an error. Falling back to manual entry.');
+      // Deterministic offline fallback: when API fails or network drops, parse locally
+      const fallbackData = fallbackParseIntake(description, today);
+      setLastFallback(true);
+      onParsed(fallbackData);
     } finally {
       setIsLoading(false);
     }

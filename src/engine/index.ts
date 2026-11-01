@@ -10,3 +10,4 @@ export * from './community';
 export * from './payments';
 export * from './scenario';
 export * from './export';
+export * from './intake';

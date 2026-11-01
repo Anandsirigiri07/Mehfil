@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, Lightbulb, Info } from 'lucide-react';
 
 interface IdeasViewProps {
   ideas: {
@@ -72,6 +72,42 @@ export const ReviewView: React.FC<ReviewViewProps> = ({ review }) => {
           <span className="font-bold uppercase tracking-wider text-[10px] block">[{f.area}]</span>
           <p className="font-semibold">{f.message}</p>
           <p className="text-[11px] opacity-90">Action: {f.actionableRecommendation}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+interface ChatMessagesViewProps {
+  chatLog: { q: string; a: string; fallback?: boolean }[];
+}
+
+export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ chatLog }) => {
+  return (
+    <div className="space-y-3">
+      {chatLog.length === 0 && (
+        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/40 text-stone-600 dark:text-stone-400 text-center space-y-2">
+          <Lightbulb className="w-6 h-6 text-amber-500 mx-auto" aria-hidden="true" />
+          <p className="font-semibold">Ask anything grounded in your plan</p>
+          <p className="text-[11px]">
+            "What is our budget contingency?", "Which tasks are delayed?", or "How many vegan meals
+            do we need?"
+          </p>
+        </div>
+      )}
+      {chatLog.map((msg, idx) => (
+        <div key={idx} className="space-y-2">
+          <div className="bg-stone-100 dark:bg-stone-800 p-2.5 rounded-xl ml-6 font-medium text-stone-900 dark:text-stone-100">
+            {msg.q}
+          </div>
+          <div className="bg-mehfil-50 dark:bg-mehfil-950/40 border border-mehfil-200 dark:border-mehfil-900 p-2.5 rounded-xl mr-6 text-stone-800 dark:text-stone-200">
+            {msg.fallback && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-1">
+                <Info className="w-3 h-3" aria-hidden="true" /> Offline Rule Heuristic
+              </span>
+            )}
+            <p className="whitespace-pre-line leading-relaxed">{msg.a}</p>
+          </div>
         </div>
       ))}
     </div>
