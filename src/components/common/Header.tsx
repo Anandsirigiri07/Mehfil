@@ -39,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
                 Challenge 5
               </span>
             </div>
-            <p className="text-[11px] text-stone-500 dark:text-stone-400 hidden sm:block">
+            <p className="text-[11px] text-stone-500 dark:text-stone-300 hidden sm:block">
               GenAI Event Planning Assistant • Weddings, Birthdays & Community
             </p>
           </div>

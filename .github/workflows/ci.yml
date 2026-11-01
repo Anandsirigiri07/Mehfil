@@ -26,6 +26,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Lint check
+        run: npm run lint
+
       - name: Format check
         run: npm run format:check
 
@@ -34,3 +37,10 @@ jobs:
 
       - name: Build production bundle
         run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E tests
+        run: npm run test:e2e
+

@@ -9,5 +9,11 @@
     "emitDeclarationOnly": true,
     "outDir": "./node_modules/.tmp"
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "playwright.config.ts"]
+  "include": [
+    "vite.config.ts",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "api/**/*",
+    "src/types/**/*"
+  ]
 }

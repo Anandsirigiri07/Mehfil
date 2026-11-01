@@ -42,7 +42,7 @@
 - **Risk**: Malicious scripts executed in the user's browser context.
 - **Mitigation**:
   - Zero usage of `dangerouslySetInnerHTML` across the entire codebase.
-  - Strict Content Security Policy (CSP) defined in [vercel.json](file:///c:/Users/anand/Mehfil/vercel.json#L7):
+  - Strict Content Security Policy (CSP) defined in [vercel.json](./vercel.json):
     - `default-src 'self'`
     - `script-src 'self'`
     - `style-src 'self'`
