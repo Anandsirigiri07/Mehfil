@@ -8,7 +8,7 @@ import { GoogleGenAI } from '@google/genai';
 
 export * from './fallbacks';
 
-const API_TIMEOUT_MS = 20000;
+const API_TIMEOUT_MS = 30000;
 const CANDIDATE_MODELS = ['gemini-flash-lite-latest', 'gemini-3.6-flash', 'gemini-3.5-flash'];
 
 export function getGeminiClient(): GoogleGenAI | null {
