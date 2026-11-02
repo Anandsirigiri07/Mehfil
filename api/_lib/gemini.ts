@@ -9,10 +9,11 @@ import { GoogleGenAI } from '@google/genai';
 export * from './fallbacks';
 
 const API_TIMEOUT_MS = 8000;
-const CANDIDATE_MODELS = ['gemini-3.6-flash', 'gemini-3.8-flash', 'gemini-3.5-flash'];
+const CANDIDATE_MODELS = ['gemini-flash-lite-latest', 'gemini-3.6-flash', 'gemini-3.5-flash'];
 
 export function getGeminiClient(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey =
+    process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
   if (!apiKey || apiKey.trim() === '' || apiKey === 'your_gemini_api_key_here') {
     return null;
   }
